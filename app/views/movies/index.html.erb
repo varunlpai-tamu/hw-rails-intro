@@ -8,7 +8,7 @@
 <%= form_tag movies_path, :method => :get, id: "ratings_form" do %>
   <% @all_ratings.each do |rating| %>
     <%= rating %>
-    <%= check_box_tag "ratings[#{rating}]", 1, @ratings.include?(rating), id: "ratings_#{rating}" %>
+    <%= check_box_tag "ratings[#{rating}]", id="ratings_#{rating}", checked=(@ratings.include?(rating)) %>
     &nbsp;&nbsp;
   <% end %>
   <br>

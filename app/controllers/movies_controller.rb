@@ -13,20 +13,31 @@ class MoviesController < ApplicationController
       @movies = Movie.all
       @all_ratings = Movie.distinct.pluck(:rating)
       
-      if params.has_key?(:ratings)
-        @movies = @movies.where(rating: params[:ratings].keys)
-        @ratings = params[:ratings].keys
-      elsif params.has_key?(:commit) && params[:commit] == 'Refresh'
-        @movies = []
-        @ratings = []
-      else
-        @ratings = Movie.distinct.pluck(:rating)
+      unless session.key?(:ratings)
+        session[:ratings] = Movie.distinct.pluck(:rating)
+      end
+      unless session.key?(:column)
+        session[:column] = ''
       end
       
-      if params[:column] == 'Title'
+      if params.key?(:ratings)
+        session[:ratings] = params[:ratings].keys
+      end
+      if params.key?(:column)
+        if session[:column] == params[:column]
+          session[:column] = ''
+        else
+          session[:column] = params[:column]
+        end
+      end
+        
+      @movies = @movies.where(rating: session[:ratings])
+      @ratings = session[:ratings]
+      
+      if session[:column] == 'Title'
         @movies = @movies.order('title': :asc)
         @title_class = 'hilite text-dark'
-      elsif params[:column] == 'Release'
+      elsif session[:column] == 'Release'
         @movies = @movies.order('release_date': :asc)
         @release_class = 'hilite text-dark'
       end
@@ -66,4 +77,4 @@ class MoviesController < ApplicationController
     def movie_params
       params.require(:movie).permit(:title, :rating, :description, :release_date)
     end
-  end
+end
