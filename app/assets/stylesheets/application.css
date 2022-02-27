@@ -13,3 +13,12 @@
  *= require_tree .
  *= require_self
  */
+
+#movies th a {
+    color: inherit;
+}
+
+.hilite {
+  background-color: yellow;
+  pointer-events: none;
+}
