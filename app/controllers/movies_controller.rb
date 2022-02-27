@@ -9,14 +9,26 @@ class MoviesController < ApplicationController
     def index
       @title_class = 'text-info'
       @release_class = 'text-info'
+      
+      @movies = Movie.all
+      @all_ratings = Movie.distinct.pluck(:rating)
+      
+      if params.has_key?(:ratings)
+        @movies = @movies.where(rating: params[:ratings].keys)
+        @ratings = params[:ratings].keys
+      elsif params.has_key?(:commit) && params[:commit] == 'Refresh'
+        @movies = []
+        @ratings = []
+      else
+        @ratings = Movie.distinct.pluck(:rating)
+      end
+      
       if params[:column] == 'Title'
-        @movies = Movie.order('title': :asc)
+        @movies = @movies.order('title': :asc)
         @title_class = 'hilite text-dark'
       elsif params[:column] == 'Release'
-        @movies = Movie.order('release_date': :asc)
+        @movies = @movies.order('release_date': :asc)
         @release_class = 'hilite text-dark'
-      else
-        @movies = Movie.all
       end
     end
   
